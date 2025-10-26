@@ -1,0 +1,45 @@
+// To run this React app on Klutch: // 1. In Klutch, create a new project or open an existing one. // 2. Add a new file named App.jsx and paste this full code. // 3. Click “Run on Klutch” → the live preview will load in your browser. // 4. On Android, open the preview URL in Chrome → tap the 3-dot menu → “Add to Home screen”. //    It will install as a fullscreen PWA with switch scanning and dwell accessibility.
+
+import React, { useState } from "react";
+
+export default function App() { const [library, setLibrary] = useState([ { title: "The Tale of Peter Rabbit", author: "Beatrix Potter", publicDomain: true }, { title: "The Velveteen Rabbit", author: "Margery Williams", publicDomain: true }, { title: "Johnny Crow’s Garden", author: "L. Leslie Brooke", publicDomain: true } ]);
+
+const [shelf, setShelf] = useState([]); const [reading, setReading] = useState(null); const [ttsEnabled, setTtsEnabled] = useState(true);
+
+function addToShelf(book) { if (!shelf.find(b => b.title === book.title)) setShelf([...shelf, book]); }
+
+function readBook(book) { setReading(book); if (ttsEnabled && window.speechSynthesis) { const utter = new SpeechSynthesisUtterance(Now reading ${book.title} by ${book.author}); speechSynthesis.speak(utter); } }
+
+return ( <main className="p-6 text-center"> <h1 className="text-3xl font-bold mb-6">Accessible Storytime App (Demo)</h1> {!reading ? ( <> <section className="mb-8"> <h2 className="text-xl font-semibold mb-3">Library</h2> <ul className="space-y-3"> {library.map(book => ( <li key={book.title} className="border p-3 rounded-lg"> <strong>{book.title}</strong> <br /> <small>{book.author}</small> <br /> <button className="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onClick={() => addToShelf(book)}>Add to Shelf</button> <button className="mt-2 ml-2 px-3 py-1 bg-green-600 text-white rounded" onClick={() => readBook(book)}>Read Aloud</button> </li> ))} </ul> </section>
+
+<section>
+        <h2 className="text-xl font-semibold mb-3">Your Bookshelf</h2>
+        {shelf.length === 0 ? (
+          <p>No books added yet.</p>
+        ) : (
+          <ul className="space-y-3">
+            {shelf.map(book => (
+              <li key={book.title} className="border p-3 rounded-lg bg-yellow-50">
+                {book.title}
+                <button className="ml-2 px-2 py-1 bg-green-600 text-white rounded" onClick={() => readBook(book)}>Open</button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </>
+  ) : (
+    <section className="p-4 border rounded-xl">
+      <h2 className="text-2xl mb-4">Reading: {reading.title}</h2>
+      <p className="text-lg mb-4">By {reading.author}</p>
+      <p className="mb-6">This is a demo view. The full version supports auto page-turn, CVI modes, and scanning access.</p>
+      <button className="px-4 py-2 bg-red-600 text-white rounded" onClick={() => setReading(null)}>Back to Library</button>
+    </section>
+  )}
+
+  <footer className="mt-10 text-sm text-gray-500">
+    © Accessible Storytime Demo • Public Domain Texts Only
+  </footer>
+</main>
+
+); }
